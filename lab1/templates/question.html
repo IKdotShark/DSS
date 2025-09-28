@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="progress-container">
+    <div class="progress-info">
+        Вопрос {{ current_number }} из {{ total_questions }}
+    </div>
+    <div class="progress-bar">
+        <div class="progress" style="width: {{ progress }}%"></div>
+    </div>
+</div>
+
+<form method="POST" id="questionForm">
+    <div class="question">
+        <h2>{{ question.question }}</h2>
+
+        {% if qid == 'q2' and maps_data %}
+        <!-- Специальный вид для выбора карты -->
+        <div class="maps-container">
+            {% for map_name, map_info in maps_data.items() %}
+            <div class="map-option">
+                <input type="radio" id="map_{{ loop.index }}" name="answer" value="{{ map_name }}" required>
+                <label for="map_{{ loop.index }}">
+                    <div class="map-image">
+                        <img src="{{ url_for('static', filename='images/maps/' + map_info.image) }}"
+                             alt="{{ map_name }}"
+                             onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'map-fallback\'><span>{{ map_name[0] }}</span></div>';">
+                    </div>
+                    <div class="map-info">
+                        <span class="map-name">{{ map_name }}</span>
+                        <span class="map-distance">
+                            <span class="distance-indicator distance-{{ map_info.distance }}"></span>
+                            {% if map_info.distance == 'A' %}
+                            Ближняя дистанция
+                            {% elif map_info.distance == 'B' %}
+                            Средняя дистанция
+                            {% else %}
+                            Дальняя дистанция
+                            {% endif %}
+                        </span>
+                    </div>
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- Стандартные варианты ответов -->
+        <div class="options">
+            {% for key, value in question.options.items() %}
+            <div class="option">
+                <input type="radio" id="{{ qid }}_{{ key }}" name="answer" value="{{ key }}" required>
+                <label for="{{ qid }}_{{ key }}">
+                    <span class="option-letter">{{ key }}</span>
+                    <span class="option-text">{{ value }}</span>
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <button type="submit" class="btn">Далее →</button>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const options = document.querySelectorAll('.option, .map-option');
+    const form = document.getElementById('questionForm');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    // Initially disable submit button
+    submitBtn.disabled = true;
+    submitBtn.classList.add('disabled');
+
+    options.forEach(option => {
+        const input = option.querySelector('input');
+        const label = option.querySelector('label');
+
+        if (label) {
+            label.addEventListener('click', function() {
+                // Remove selected class from all options
+                options.forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+
+                // Add selected class to clicked option
+                option.classList.add('selected');
+
+                // Check the radio button
+                input.checked = true;
+
+                // Enable submit button
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('disabled');
+            });
+        }
+    });
+
+    // Allow form submission on Enter key
+    form.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !submitBtn.disabled) {
+            form.submit();
+        }
+    });
+
+    // Preload images to avoid flickering
+    const images = document.querySelectorAll('.map-image img');
+    images.forEach(img => {
+        const newImg = new Image();
+        newImg.src = img.src;
+    });
+});
+</script>
+{% endblock %}

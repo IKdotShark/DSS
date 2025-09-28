@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подбор оружия для новичка в Tarkov</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-info {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b 0%, #ee5a24 100%);
+            transition: width 0.3s ease;
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question h2 {
+            font-size: 1.4em;
+            margin-bottom: 25px;
+            color: #ffd700;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* Стили для стандартных вариантов */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .option.selected {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .option input {
+            display: none;
+        }
+
+        .option label {
+            display: flex;
+            align-items: flex-start;
+            padding: 18px 20px;
+            cursor: pointer;
+            min-height: 70px;
+        }
+
+        .option-letter {
+            background: #ffd700;
+            color: #1a1a2e;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+            font-size: 0.9em;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 1em;
+            line-height: 1.4;
+        }
+
+        /* Стили для выбора карт */
+        .maps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .map-option {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .map-option:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 215, 0, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .map-option.selected {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .map-option input {
+            display: none;
+        }
+
+        .map-option label {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            height: 100%;
+        }
+
+        .map-image {
+            height: 140px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        .map-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .map-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .map-fallback span {
+            background: rgba(255, 255, 255, 0.2);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .map-option:hover .map-image img {
+            transform: scale(1.05);
+        }
+
+        .map-info {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .map-name {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+            color: #ffd700;
+        }
+
+        .map-distance {
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+            color: #ccc;
+            margin-top: auto;
+        }
+
+        /* Индикатор дистанции */
+        .distance-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .distance-A { background-color: #ff6b6b; } /* Ближняя */
+        .distance-B { background-color: #feca57; } /* Средняя */
+        .distance-C { background-color: #48dbfb; } /* Дальняя */
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+            width: 200px;
+        }
+
+        .btn:hover:not(.disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn.disabled {
+            background: rgba(255, 255, 255, 0.2);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Стили для результатов */
+        .result-card {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .weapon-name {
+            font-size: 2em;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .weapon-list {
+            text-align: left;
+            margin: 25px 0;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .pros, .cons {
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .pros {
+            background: rgba(46, 204, 113, 0.2);
+            border-left: 4px solid #2ecc71;
+        }
+
+        .cons {
+            background: rgba(231, 76, 60, 0.2);
+            border-left: 4px solid #e74c3c;
+        }
+
+        .advice {
+            background: rgba(52, 152, 219, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .maps-container {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+            }
+
+            .map-image {
+                height: 120px;
+            }
+
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+
+            .option label {
+                padding: 15px;
+                min-height: 60px;
+            }
+
+            .question h2 {
+                font-size: 1.2em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .maps-container {
+                grid-template-columns: 1fr;
+            }
+
+            .map-info {
+                padding: 10px;
+            }
+
+            .map-fallback {
+                font-size: 2em;
+            }
+
+            .map-fallback span {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
