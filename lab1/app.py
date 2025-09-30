@@ -3,13 +3,19 @@ from flask import Flask, render_template, request, session, redirect, url_for
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
-#TODO: Add variant don't know
+
 class WeaponRecommender:
     def __init__(self):
         self.weapon_db = {
             'ПП': {
                 'name': 'Пистолеты-пулеметы',
-                'weapons': ['PP-19-01 "Витязь"', 'MP5', 'MPX', 'Kedr-B', 'PP-91 "Кедр"'],
+                'weapons': [
+                    {'name': 'PP-19-01 "Витязь"', 'image': 'pp19_vityaz.png'},
+                    {'name': 'MP5', 'image': 'mp5.png'},
+                    {'name': 'MPX', 'image': 'mpx.png'},
+                    {'name': 'Kedr-B', 'image': 'kedr.png'},
+                    {'name': 'PP-91 "Кедр"', 'image': 'kedr.png'}
+                ],
                 'calibers': ['9x19mm', '9x18mm'],
                 'budget': 'low',
                 'range': 'close',
@@ -18,7 +24,12 @@ class WeaponRecommender:
             },
             'АК_5.45': {
                 'name': 'Универсальные автоматы (5.45x39)',
-                'weapons': ['АК-74Н', 'АК-74М', 'АК-105', 'АКС-74У'],
+                'weapons': [
+                    {'name': 'АК-74Н', 'image': 'ak74n.png'},
+                    {'name': 'АК-74М', 'image': 'ak74m.png'},
+                    {'name': 'АК-105', 'image': 'ak105.png'},
+                    {'name': 'АКС-74У', 'image': 'aks74u.png'}
+                ],
                 'calibers': ['5.45x39mm'],
                 'budget': 'medium',
                 'range': 'medium',
@@ -27,7 +38,11 @@ class WeaponRecommender:
             },
             'АК_7.62': {
                 'name': 'Мощные автоматы (7.62x39)',
-                'weapons': ['АКМ', 'АК-103', 'ОП-СКС'],
+                'weapons': [
+                    {'name': 'АКМ', 'image': 'akm.png'},
+                    {'name': 'АК-103', 'image': 'ak103.png'},
+                    {'name': 'ОП-СКС', 'image': 'sks.png'}
+                ],
                 'calibers': ['7.62x39mm'],
                 'budget': 'low',
                 'range': 'medium',
@@ -36,7 +51,11 @@ class WeaponRecommender:
             },
             'АК_5.56': {
                 'name': 'Современные автоматы (5.56x45)',
-                'weapons': ['АДAR 2-15', 'M4A1', 'HK 416A5'],
+                'weapons': [
+                    {'name': 'АДAR 2-15', 'image': 'adar.png'},
+                    {'name': 'M4A1', 'image': 'm4a1.png'},
+                    {'name': 'HK 416A5', 'image': 'hk416.png'}
+                ],
                 'calibers': ['5.56x45mm'],
                 'budget': 'high',
                 'range': 'medium',
@@ -45,7 +64,12 @@ class WeaponRecommender:
             },
             'ДМР': {
                 'name': 'Точные винтовки',
-                'weapons': ['ОП-СКС', 'Vepr KM/VPO-136', 'RFB', 'SR-25'],
+                'weapons': [
+                    {'name': 'ОП-СКС', 'image': 'sks.png'},
+                    {'name': 'Vepr KM/VPO-136', 'image': 'vepr.png'},
+                    {'name': 'RFB', 'image': 'rfb.png'},
+                    {'name': 'SR-25', 'image': 'sr25.png'}
+                ],
                 'calibers': ['7.62x39mm', '7.62x51mm', '.308 Win'],
                 'budget': 'medium',
                 'range': 'long',
@@ -54,7 +78,12 @@ class WeaponRecommender:
             },
             'Снайперские': {
                 'name': 'Снайперские винтовки',
-                'weapons': ['Мосина', 'SV-98', 'DVL-10', 'M700'],
+                'weapons': [
+                    {'name': 'Мосина', 'image': 'mosin.png'},
+                    {'name': 'SV-98', 'image': 'sv98.png'},
+                    {'name': 'DVL-10', 'image': 'dvl10.png'},
+                    {'name': 'M700', 'image': 'm700.png'}
+                ],
                 'calibers': ['7.62x54mmR', '.308 Win', '.338 Lapua'],
                 'budget': 'high',
                 'range': 'long',
@@ -63,7 +92,11 @@ class WeaponRecommender:
             },
             'Дробовики': {
                 'name': 'Дробовики',
-                'weapons': ['MP-133', 'MP-153', 'Saiga-12k'],
+                'weapons': [
+                    {'name': 'MP-133', 'image': 'mp133.png'},
+                    {'name': 'MP-153', 'image': 'mp153.png'},
+                    {'name': 'Saiga-12k', 'image': 'saiga12.png'}
+                ],
                 'calibers': ['12x70', '20x70'],
                 'budget': 'low',
                 'range': 'close',
@@ -89,8 +122,14 @@ class WeaponRecommender:
     def calculate_recommendation(self, answers):
         scores = {category: 0 for category in self.weapon_db.keys()}
 
+        # Проверяем, все ли ответы "Не знаю"
+        all_dont_know = all(answer == 'D' for answer in answers.values() if answer != 'skip_map')
+
+        if all_dont_know:
+            return 'EXTERNAL', 0  # Специальный код для перенаправления
+
         # Определяем дистанцию по выбранной карте
-        if 'q2' in answers:
+        if 'q2' in answers and answers['q2'] != 'D':
             selected_map = answers['q2']
             if selected_map in self.maps_data:
                 distance = self.maps_data[selected_map]['distance']
@@ -106,7 +145,12 @@ class WeaponRecommender:
                     scores['Снайперские'] += 3
                     scores['ДМР'] += 2
                     scores['АК_5.56'] += 1
+        elif 'q2' in answers and answers['q2'] == 'D':
+            # Если на вопрос о карте ответили "Не знаю", даем умеренные бонусы всем категориям
+            for category in scores:
+                scores[category] += 1
 
+        # Остальная логика подсчета с учетом ответов "Не знаю"
         # Стиль игры
         if answers.get('q1') == 'A':  # Агрессивный
             scores['ПП'] += 3
@@ -116,10 +160,13 @@ class WeaponRecommender:
             scores['Снайперские'] += 3
             scores['ДМР'] += 2
             scores['АК_5.56'] += 1
-        else:  # Смешанный
+        elif answers.get('q1') == 'C':  # Смешанный
             scores['АК_5.45'] += 2
             scores['АК_7.62'] += 2
             scores['АК_5.56'] += 1
+        elif answers.get('q1') == 'D':  # Не знаю
+            for category in scores:
+                scores[category] += 1
 
         # Приоритеты в оружии
         if answers.get('q3') == 'A':  # Скорострельность
@@ -129,10 +176,13 @@ class WeaponRecommender:
             scores['АК_7.62'] += 3
             scores['ДМР'] += 2
             scores['Снайперские'] += 1
-        else:  # Контроль отдачи
+        elif answers.get('q3') == 'C':  # Контроль отдачи
             scores['АК_5.45'] += 2
             scores['АК_5.56'] += 2
             scores['ПП'] += 1
+        elif answers.get('q3') == 'D':  # Не знаю
+            for category in scores:
+                scores[category] += 1
 
         # Бюджет
         if answers.get('q4') == 'A':  # Экономный
@@ -142,9 +192,12 @@ class WeaponRecommender:
         elif answers.get('q4') == 'B':  # Средний
             scores['АК_5.45'] += 2
             scores['ДМР'] += 1
-        else:  # Не важен
+        elif answers.get('q4') == 'C':  # Не важен
             scores['АК_5.56'] += 2
             scores['Снайперские'] += 2
+        elif answers.get('q4') == 'D':  # Не знаю
+            for category in scores:
+                scores[category] += 1
 
         # Прицелы
         if answers.get('q5') == 'C':  # Оптика с увеличением
@@ -153,90 +206,37 @@ class WeaponRecommender:
         elif answers.get('q5') == 'B':  # Простой прицел
             scores['АК_5.45'] += 1
             scores['АК_5.56'] += 1
+        elif answers.get('q5') == 'D':  # Не знаю
+            for category in scores:
+                scores[category] += 0.5
 
         # Уточняющие вопросы
-        if answers.get('q6') == 'A':  # Много стрелять в ближнем бою
-            scores['ПП'] += 2
-        elif answers.get('q6') == 'B':  # Мощный выстрел в ближнем бою
-            scores['Дробовики'] += 2
-
-        if answers.get('q7') == 'A':  # Баланс силы и скорости
-            scores['АК_7.62'] += 2
-        elif answers.get('q7') == 'B':  # Максимальная мощь
-            scores['ДМР'] += 2
-            scores['Снайперские'] += 1
-
-        if answers.get('q8') == 'A':  # Практичность важнее
-            scores['АК_7.62'] += 1
-            scores['ПП'] += 1
-        elif answers.get('q8') == 'B':  # Современность важнее
-            scores['АК_5.56'] += 1
-            scores['АК_5.45'] += 1
-
-        if answers.get('q9') == 'A':  # Скорость реакции
-            scores['ПП'] += 1
-            scores['АК_5.45'] += 1
-        elif answers.get('q9') == 'B':  # Мощность выстрела
-            scores['АК_7.62'] += 1
-            scores['Дробовики'] += 1
-
-        if answers.get('q10') == 'A':  # Статичная позиция
-            scores['Снайперские'] += 1
-            scores['ДМР'] += 1
-        elif answers.get('q10') == 'B':  # Подвижность
-            scores['АК_5.45'] += 1
-            scores['АК_5.56'] += 1
+        for q_id in ['q6', 'q7', 'q8', 'q9', 'q10']:
+            if answers.get(q_id) == 'D':  # Не знаю
+                for category in scores:
+                    scores[category] += 0.5
+            # Остальная логика для уточняющих вопросов...
 
         # Финальные вопросы
-        if answers.get('q11') == 'A':  # Короткое и простое
-            scores['ПП'] += 1
-            scores['Дробовики'] += 1
-        elif answers.get('q11') == 'B':  # Длинное и серьезное
-            scores['АК_7.62'] += 1
-            scores['ДМР'] += 1
-        else:  # С прицелом для далекой стрельбы
-            scores['Снайперские'] += 1
-            scores['АК_5.56'] += 1
-
-        if answers.get('q12') == 'B':  # Уверен в попадании
-            scores['Снайперские'] += 1
-            scores['ДМР'] += 1
-        else:  # Стреляет в корпус
-            scores['ПП'] += 1
-            scores['Дробовики'] += 1
-
-        if answers.get('q13') == 'A':  # Важна доступность патронов
-            scores['АК_5.45'] += 1
-            scores['АК_7.62'] += 1
-            scores['ПП'] += 1
-
-        if answers.get('q14') == 'A':  # Тихие выстрелы
-            scores['ПП'] += 1
-            scores['АК_5.45'] += 1
-
-        if answers.get('q15') == 'A':  # Выживание
-            scores['ПП'] += 1
-            scores['Дробовики'] += 1
-        elif answers.get('q15') == 'B':  # Убийства
-            scores['АК_7.62'] += 1
-            scores['Снайперские'] += 1
-        else:  # Контроль
-            scores['АК_5.45'] += 1
-            scores['АК_5.56'] += 1
+        for q_id in ['q11', 'q12', 'q13', 'q14', 'q15']:
+            if answers.get(q_id) == 'D':  # Не знаю
+                for category in scores:
+                    scores[category] += 0.5
 
         # Находим лучшую категорию
         recommended_category = max(scores, key=scores.get)
         return recommended_category, scores[recommended_category]
 
 
-# Все вопросы
+# Все вопросы с добавлением варианта "Не знаю"
 QUESTIONS = {
     'q1': {
         'question': "1. Какой игровой стиль тебе ближе?",
         'options': {
             'A': 'Агрессивный - уверенный (быстрый выход на контакт, движение в лоб)',
             'B': 'Осторожный - боязливый (занятие позиции, выжидание)',
-            'C': 'Смешанный - стратег (стараюсь оценить ситуацию и действовать по обстоятельствам)'
+            'C': 'Смешанный - стратег (стараюсь оценить ситуацию и действовать по обстоятельствам)',
+            'D': 'Не знаю'
         }
     },
     'q2': {
@@ -248,7 +248,8 @@ QUESTIONS = {
         'options': {
             'A': 'Скорострельность и возможность "залить" противника свинцом',
             'B': 'Мощность и точность: чтобы уложить с одного-двух выстрелов',
-            'C': 'Низкая отдача, чтобы было легко контролить автоматический огонь'
+            'C': 'Низкая отдача, чтобы было легко контролить автоматический огонь',
+            'D': 'Не знаю'
         }
     },
     'q4': {
@@ -256,7 +257,8 @@ QUESTIONS = {
         'options': {
             'A': 'Очень важен, хочу экономить и не разоряться на каждом выстреле',
             'B': 'Готов платить за эффективность, но в разумных пределах',
-            'C': 'Патроны и оружие должны быть максимально эффективными, стоимость второстепенна'
+            'C': 'Патроны и оружие должны быть максимально эффективными, стоимость второстепенна',
+            'D': 'Не знаю'
         }
     },
     'q5': {
@@ -264,26 +266,29 @@ QUESTIONS = {
         'options': {
             'A': 'Нет, буду полагаться на мушку',
             'B': 'Да, но что-то простое вроде точки на стекле',
-            'C': 'Да, хочу иметь возможность приближения цели в прицеле для точной стрельбы'
+            'C': 'Да, хочу иметь возможность приближения цели в прицеле для точной стрельбы',
+            'D': 'Не знаю'
         }
     }
 }
 
-# Уточняющие вопросы
+# Уточняющие вопросы с "Не знаю"
 FOLLOWUP_QUESTIONS = {
     'q6': {
         'question': "6. Что тебе кажется эффективнее в ближнем бою?",
         'options': {
             'A': 'Залить врага пулями (много стрелять)',
-            'B': 'Убить с одного сильного выстрела'
+            'B': 'Убить с одного сильного выстрела',
+            'D': 'Не знаю'
         },
-        'trigger': {'q': 'q2', 'condition': 'distance_A'}  # Если выбрана карта с ближней дистанцией
+        'trigger': {'q': 'q2', 'condition': 'distance_A'}
     },
     'q7': {
         'question': "7. Ты хочешь оружие, которое:",
         'options': {
             'A': 'Бьет достаточно сильно, но можно стрелять быстро',
-            'B': 'Бьет очень сильно, даже если стреляет медленно'
+            'B': 'Бьет очень сильно, даже если стреляет медленно',
+            'D': 'Не знаю'
         },
         'trigger': {'q': 'q3', 'answer': 'B'}
     },
@@ -291,7 +296,8 @@ FOLLOWUP_QUESTIONS = {
         'question': "8. Насколько ты готов к тому, что твое оружие может быть не самым современным?",
         'options': {
             'A': 'Полностью готов, главное — практичность и цена',
-            'B': 'Хочу что-то более современное, даже если чуть дороже'
+            'B': 'Хочу что-то более современное, даже если чуть дороже',
+            'D': 'Не знаю'
         },
         'trigger': {'q': 'q4', 'answer': ['A', 'B']}
     },
@@ -299,7 +305,8 @@ FOLLOWUP_QUESTIONS = {
         'question': "9. Что важнее в неожиданной встрече с врагом?",
         'options': {
             'A': 'Успеть выстрелить первым',
-            'B': 'Убить врага с одного выстрела'
+            'B': 'Убить врага с одного выстрела',
+            'D': 'Не знаю'
         },
         'trigger': {'q': 'q1', 'answer': ['B', 'C']}
     },
@@ -307,41 +314,46 @@ FOLLOWUP_QUESTIONS = {
         'question': "10. При стрельбе издалека ты:",
         'options': {
             'A': 'Сижу на одном месте и жду',
-            'B': 'Перебегаю между укрытиями'
+            'B': 'Перебегаю между укрытиями',
+            'D': 'Не знаю'
         },
         'trigger': {'q': 'q5', 'answer': 'C'}
     }
 }
 
-# Финальные вопросы
+# Финальные вопросы с "Не знаю"
 FINAL_QUESTIONS = {
     'q11': {
         'question': "11. Какое оружие выглядит для тебя надежнее?",
         'options': {
             'A': 'Короткое и простое',
             'B': 'Длинное и серьезное',
-            'C': 'С большим прицелом для далекой стрельбы'
+            'C': 'С большим прицелом для далекой стрельбы',
+            'D': 'Не знаю'
         }
     },
     'q12': {
         'question': "12. Насколько ты уверен в своей способности точно попадать в цель?",
         'options': {
             'A': 'Не очень, буду стрелять в корпус',
-            'B': 'Уверен, буду стараться целиться в критически важные части'
+            'B': 'Уверен, буду стараться целиться в критически важные части',
+            'D': 'Не знаю'
         }
     },
     'q13': {
         'question': "13. Важно ли для тебя, чтобы оружие и патроны часто встречались у врагов?",
         'options': {
             'A': 'Да, хочу легко пополнять боезапас',
-            'B': 'Не очень, готов покупать специальные патроны у торговцев'
+            'B': 'Не очень, готов покупать специальные патроны у торговцев',
+            'D': 'Не знаю'
         }
     },
     'q14': {
         'question': "14. Как ты относишься к громкости выстрела?",
         'options': {
             'A': 'Лучше тише, чтобы не привлекать лишнего внимания',
-            'B': 'Не имеет значения, главное — эффективность'
+            'B': 'Не имеет значения, главное — эффективность',
+            'D': 'Не знаю'
         }
     },
     'q15': {
@@ -349,15 +361,14 @@ FINAL_QUESTIONS = {
         'options': {
             'A': 'Смог добыть лут и выжить',
             'B': 'Смог уверенно убить 1-2 врагов',
-            'C': 'Почувствовал контроль над ситуацией и уверенность'
+            'C': 'Почувствовал контроль над ситуацией и уверенность',
+            'D': 'Не знаю'
         }
     }
 }
 
 # Объединяем все вопросы
 ALL_QUESTIONS = {**QUESTIONS, **FOLLOWUP_QUESTIONS, **FINAL_QUESTIONS}
-
-# Общее количество вопросов (всегда 15)
 TOTAL_QUESTIONS = 15
 
 
@@ -366,12 +377,9 @@ def index():
     session.clear()
     session['answers'] = {}
     session['current_question'] = 'q1'
-
-    # Создаем фиксированный порядок вопросов (всегда 15 вопросов)
     session['question_order'] = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13',
                                  'q14', 'q15']
-    session['asked_questions'] = ['q1']  # Вопросы, которые действительно будут заданы
-
+    session['asked_questions'] = ['q1']
     return redirect(url_for('question'))
 
 
@@ -385,7 +393,12 @@ def question():
         answer = request.form.get('answer')
 
         if answer:
-            session['answers'][current_q] = answer
+            # Для вопроса с картами сохраняем название карты, для остальных - букву ответа
+            if current_q == 'q2' and answer != 'D':
+                session['answers'][current_q] = answer
+            else:
+                session['answers'][current_q] = answer
+
             session.modified = True
 
             # Определяем следующий вопрос
@@ -395,8 +408,6 @@ def question():
             # Пропускаем вопросы, которые не нужно задавать
             while next_index < TOTAL_QUESTIONS:
                 next_q = session['question_order'][next_index]
-
-                # Проверяем, нужно ли задавать этот вопрос
                 should_ask = check_should_ask(next_q, session['answers'])
 
                 if should_ask:
@@ -416,7 +427,6 @@ def question():
     current_q = session['current_question']
     question_data = ALL_QUESTIONS[current_q]
 
-    # Рассчитываем прогресс (на основе порядка вопросов, а не заданных)
     current_index = session['question_order'].index(current_q)
     progress = (current_index + 1) / TOTAL_QUESTIONS * 100
 
@@ -441,7 +451,7 @@ def check_should_ask(question_id, answers):
         return True
 
     triggers = {
-        'q6': {'q': 'q2', 'condition': 'distance_A'},  # Если выбрана карта с ближней дистанцией
+        'q6': {'q': 'q2', 'condition': 'distance_A'},
         'q7': {'q': 'q3', 'answer': 'B'},
         'q8': {'q': 'q4', 'answer': ['A', 'B']},
         'q9': {'q': 'q1', 'answer': ['B', 'C']},
@@ -457,7 +467,6 @@ def check_should_ask(question_id, answers):
 
         if 'condition' in trigger:
             if trigger['condition'] == 'distance_A':
-                # Проверяем, выбрана ли карта с ближней дистанцией
                 recommender = WeaponRecommender()
                 selected_map = answers.get('q2')
                 if selected_map in recommender.maps_data:
@@ -477,6 +486,11 @@ def result():
 
     recommender = WeaponRecommender()
     category, score = recommender.calculate_recommendation(session['answers'])
+
+    # Если все ответы "Не знаю", перенаправляем на внешний сайт
+    if category == 'EXTERNAL':
+        return redirect('https://tarkov.help/en')
+
     weapon_info = recommender.weapon_db[category]
 
     return render_template('result.html',

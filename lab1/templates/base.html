@@ -371,6 +371,177 @@
                 height: 60px;
             }
         }
+        .dont-know-option {
+            border-color: rgba(155, 89, 182, 0.5);
+        }
+
+        .dont-know-option:hover {
+            border-color: rgba(155, 89, 182, 0.8);
+        }
+
+        .dont-know-option.selected {
+            background: rgba(155, 89, 182, 0.2);
+            border-color: #9b59b6;
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
+        }
+
+        .dont-know-letter {
+            background: #9b59b6;
+        }
+
+        .dont-know-image {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+            font-size: 3em;
+            font-weight: bold;
+        }
+        .weapon-category {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .category-info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .budget-indicator, .range-indicator {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .budget-low { background: rgba(46, 204, 113, 0.3); color: #2ecc71; }
+        .budget-medium { background: rgba(241, 196, 15, 0.3); color: #f1c40f; }
+        .budget-high { background: rgba(231, 76, 60, 0.3); color: #e74c3c; }
+
+        .range-close { background: rgba(230, 126, 34, 0.3); color: #e67e22; }
+        .range-medium { background: rgba(52, 152, 219, 0.3); color: #3498db; }
+        .range-long { background: rgba(155, 89, 182, 0.3); color: #9b59b6; }
+
+        .recommended-weapons {
+            margin: 30px 0;
+        }
+
+        .weapons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .weapon-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .weapon-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .weapon-image {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .weapon-image img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .weapon-name {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .caliber-info {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .calibers {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .caliber-tag {
+            background: rgba(52, 152, 219, 0.3);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            border: 1px solid rgba(52, 152, 219, 0.5);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+
+        .btn-external {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        .general-advice {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .general-advice ul {
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .general-advice li {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .weapons-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
     </style>
 </head>
 <body>

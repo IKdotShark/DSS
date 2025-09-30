@@ -4,11 +4,46 @@
 <div class="result-card">
     <h1>🎯 ТВОЙ ИДЕАЛЬНЫЙ ВЫБОР!</h1>
 
-    <div class="weapon-name">{{ weapon_info.name }}</div>
+    <div class="weapon-category">
+        <h2 class="weapon-name">{{ weapon_info.name }}</h2>
+        <div class="category-info">
+            <span class="budget-indicator budget-{{ weapon_info.budget }}">
+                Бюджет: {% if weapon_info.budget == 'low' %}Низкий{% elif weapon_info.budget == 'medium' %}Средний{% else %}Высокий{% endif %}
+            </span>
+            <span class="range-indicator range-{{ weapon_info.range }}">
+                Дистанция: {% if weapon_info.range == 'close' %}Ближняя{% elif weapon_info.range == 'medium' %}Средняя{% else %}Дальняя{% endif %}
+            </span>
+        </div>
+    </div>
+
+    <div class="recommended-weapons">
+        <h3>🎯 Рекомендуемое оружие:</h3>
+        <div class="weapons-grid">
+            {% for weapon in weapon_info.weapons %}
+            <div class="weapon-card">
+                <div class="weapon-image">
+                    <img src="{{ url_for('static', filename='images/guns/' + weapon.image) }}"
+                         alt="{{ weapon.name }}"
+                         onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj57eyB3ZWFwb24ubmFtZSB9fTwvdGV4dD48L3N2Zz4='.replace('{{ weapon.name }}', '{{ weapon.name }}');">
+                </div>
+                <div class="weapon-name">{{ weapon.name }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="caliber-info">
+        <h4>💥 Используемые калибры:</h4>
+        <div class="calibers">
+            {% for caliber in weapon_info.calibers %}
+            <span class="caliber-tag">{{ caliber }}</span>
+            {% endfor %}
+        </div>
+    </div>
 
     <div class="pros-cons">
         <div class="pros">
-            <h3>👍 Плюсы:</h3>
+            <h3>👍 Преимущества:</h3>
             <ul>
                 {% for pro in weapon_info.pros %}
                 <li>{{ pro }}</li>
@@ -26,28 +61,30 @@
         </div>
     </div>
 
-    <div class="weapon-list">
-        <h3>🎯 Попробуй эти модели:</h3>
-        <ul>
-            {% for weapon in weapon_info.weapons[:3] %}
-            <li><strong>{{ weapon }}</strong> ({{ weapon_info.calibers|join(', ') }})</li>
-            {% endfor %}
-        </ul>
-    </div>
-
     <div class="advice">
         <h3>💡 СОВЕТЫ ДЛЯ ТЕБЯ:</h3>
         {% if category in ['ПП', 'Дробовики'] %}
-        <p>Заходи в здания и ищи врагов вблизи. Не бойся стрелять много - твое оружие создано для ближнего боя!</p>
+        <p>Заходи в здания и ищи врагов вблизи. Не бойся стрелять много - твое оружие создано для ближнего боя! Используй тактику внезапных нападений из-за углов.</p>
         {% elif category in ['АК_5.45', 'АК_7.62', 'АК_5.56'] %}
-        <p>Стреляй короткими очередями (2-3 выстрела). Учись контролировать отдачу. Это самый универсальный выбор!</p>
+        <p>Стреляй короткими очередями (2-3 выстрела). Учись контролировать отдачу. Это самый универсальный выбор! Занми выгодные позиции на средней дистанции.</p>
         {% else %}
-        <p>Выбирай позиции с хорошим обзором. Будь терпелив - твое оружие требует точности, но награждает мощью!</p>
+        <p>Выбирай позиции с хорошим обзором. Будь терпелив - твое оружие требует точности, но награждает мощью! Используй укрытия для маскировки.</p>
         {% endif %}
 
-        <p><strong>Главный совет:</strong> Не бойся умирать! Каждая смерть - это урок. Удачи в рейде! 🚀</p>
+        <div class="general-advice">
+            <h4>🎮 Общие советы для новичка:</h4>
+            <ul>
+                <li>Изучи <strong>таблицы патронов</strong> - от патрона зависит 90% успеха</li>
+                <li>Начинай с <strong>оффлайновых рейдов</strong> против ботов</li>
+                <li>Не бойся умирать! Каждая смерть - это ценный урок</li>
+                <li>Используй <strong>страхование</strong> оружия у торговцев</li>
+            </ul>
+        </div>
     </div>
 
-    <a href="{{ url_for('index') }}" class="btn">Пройти еще раз</a>
+    <div class="action-buttons">
+        <a href="{{ url_for('index') }}" class="btn btn-restart">Пройти тест заново</a>
+        <a href="https://tarkov.help/en" class="btn btn-external" target="_blank">Узнать больше на Tarkov.help</a>
+    </div>
 </div>
 {% endblock %}

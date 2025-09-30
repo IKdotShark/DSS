@@ -42,15 +42,28 @@
                 </label>
             </div>
             {% endfor %}
+            <!-- Вариант "Не знаю" для карт -->
+            <div class="map-option dont-know-option">
+                <input type="radio" id="map_dont_know" name="answer" value="D" required>
+                <label for="map_dont_know">
+                    <div class="map-image">
+                        <div class="dont-know-image">?</div>
+                    </div>
+                    <div class="map-info">
+                        <span class="map-name">Не знаю</span>
+                        <span class="map-distance">Затрудняюсь ответить</span>
+                    </div>
+                </label>
+            </div>
         </div>
         {% else %}
         <!-- Стандартные варианты ответов -->
         <div class="options">
             {% for key, value in question.options.items() %}
-            <div class="option">
+            <div class="option {% if key == 'D' %}dont-know-option{% endif %}">
                 <input type="radio" id="{{ qid }}_{{ key }}" name="answer" value="{{ key }}" required>
                 <label for="{{ qid }}_{{ key }}">
-                    <span class="option-letter">{{ key }}</span>
+                    <span class="option-letter {% if key == 'D' %}dont-know-letter{% endif %}">{{ key }}</span>
                     <span class="option-text">{{ value }}</span>
                 </label>
             </div>
@@ -101,13 +114,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Enter' && !submitBtn.disabled) {
             form.submit();
         }
-    });
-
-    // Preload images to avoid flickering
-    const images = document.querySelectorAll('.map-image img');
-    images.forEach(img => {
-        const newImg = new Image();
-        newImg.src = img.src;
     });
 });
 </script>
