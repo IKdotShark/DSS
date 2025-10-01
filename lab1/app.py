@@ -10,11 +10,11 @@ class WeaponRecommender:
             'ПП': {
                 'name': 'Пистолеты-пулеметы',
                 'weapons': [
-                    {'name': 'PP-19-01 "Витязь"', 'image': 'pp19_vityaz.png'},
-                    {'name': 'MP5', 'image': 'mp5.png'},
-                    {'name': 'MPX', 'image': 'mpx.png'},
-                    {'name': 'Kedr-B', 'image': 'kedr.png'},
-                    {'name': 'PP-91 "Кедр"', 'image': 'kedr.png'}
+                    {'name': 'PP-19-01 "Витязь"', 'image': 'pp19_01.jpg'},
+                    {'name': 'MP5', 'image': 'mp5.jpg'},
+                    {'name': 'MPX', 'image': 'mpx.jpg'},
+                    {'name': 'Kedr-B', 'image': 'kedr.jpg'},
+                    {'name': 'PP-91 "Кедр"', 'image': 'kedr_pos.jpg'}
                 ],
                 'calibers': ['9x19mm', '9x18mm'],
                 'budget': 'low',
@@ -25,10 +25,10 @@ class WeaponRecommender:
             'АК_5.45': {
                 'name': 'Универсальные автоматы (5.45x39)',
                 'weapons': [
-                    {'name': 'АК-74Н', 'image': 'ak74n.png'},
-                    {'name': 'АК-74М', 'image': 'ak74m.png'},
-                    {'name': 'АК-105', 'image': 'ak105.png'},
-                    {'name': 'АКС-74У', 'image': 'aks74u.png'}
+                    {'name': 'АК-74Н', 'image': 'ak-74h.jpg'},
+                    {'name': 'АК-12', 'image': 'ak-12.jpg'},
+                    {'name': 'АК-105', 'image': 'ak-105.jpg'},
+                    {'name': 'AK-74SU', 'image': 'ak-su.jpg'}
                 ],
                 'calibers': ['5.45x39mm'],
                 'budget': 'medium',
@@ -40,8 +40,9 @@ class WeaponRecommender:
                 'name': 'Мощные автоматы (7.62x39)',
                 'weapons': [
                     {'name': 'АКМ', 'image': 'akm.png'},
-                    {'name': 'АК-103', 'image': 'ak103.png'},
-                    {'name': 'ОП-СКС', 'image': 'sks.png'}
+                    {'name': 'АК-103', 'image': 'ak-103.jpg'},
+                    {'name': 'RD-704', 'image': 'rd-704.jpg'},
+                    {'name': 'SAG 5.45', 'image': 'sag545.jpg'}
                 ],
                 'calibers': ['7.62x39mm'],
                 'budget': 'low',
@@ -52,9 +53,9 @@ class WeaponRecommender:
             'АК_5.56': {
                 'name': 'Современные автоматы (5.56x45)',
                 'weapons': [
-                    {'name': 'АДAR 2-15', 'image': 'adar.png'},
-                    {'name': 'M4A1', 'image': 'm4a1.png'},
-                    {'name': 'HK 416A5', 'image': 'hk416.png'}
+                    {'name': 'TX-15', 'image': 'tx-15.jpg'},
+                    {'name': 'M4A1', 'image': 'm4a1.jpg'},
+                    {'name': 'HK 416A5', 'image': 'hk416.jpg'}
                 ],
                 'calibers': ['5.56x45mm'],
                 'budget': 'high',
@@ -65,12 +66,12 @@ class WeaponRecommender:
             'ДМР': {
                 'name': 'Точные винтовки',
                 'weapons': [
-                    {'name': 'ОП-СКС', 'image': 'sks.png'},
-                    {'name': 'Vepr KM/VPO-136', 'image': 'vepr.png'},
-                    {'name': 'RFB', 'image': 'rfb.png'},
-                    {'name': 'SR-25', 'image': 'sr25.png'}
+                    {'name': 'RSASS', 'image': 'rsass.jpg'},
+                    {'name': 'MDR', 'image': 'mdr.jpg'},
+                    {'name': 'RFB', 'image': 'rfb.jpg'},
+                    {'name': 'SR-25', 'image': 'sr-25.jpg'}
                 ],
-                'calibers': ['7.62x39mm', '7.62x51mm', '.308 Win'],
+                'calibers': ['7.62x54mm', '7.62x51mm', '.308 Win'],
                 'budget': 'medium',
                 'range': 'long',
                 'pros': ['Убивает с 1-2 выстрелов', 'Точный на расстоянии'],
@@ -79,10 +80,10 @@ class WeaponRecommender:
             'Снайперские': {
                 'name': 'Снайперские винтовки',
                 'weapons': [
-                    {'name': 'Мосина', 'image': 'mosin.png'},
-                    {'name': 'SV-98', 'image': 'sv98.png'},
-                    {'name': 'DVL-10', 'image': 'dvl10.png'},
-                    {'name': 'M700', 'image': 'm700.png'}
+                    {'name': 'Мосина', 'image': 'mosin.jpg'},
+                    {'name': 'SV-98', 'image': 'sv-98.jpg'},
+                    {'name': 'DVL-10', 'image': 'dvl-10.jpg'},
+                    {'name': 'M700', 'image': 'm700.jpg'}
                 ],
                 'calibers': ['7.62x54mmR', '.308 Win', '.338 Lapua'],
                 'budget': 'high',
@@ -93,9 +94,9 @@ class WeaponRecommender:
             'Дробовики': {
                 'name': 'Дробовики',
                 'weapons': [
-                    {'name': 'MP-133', 'image': 'mp133.png'},
-                    {'name': 'MP-153', 'image': 'mp153.png'},
-                    {'name': 'Saiga-12k', 'image': 'saiga12.png'}
+                    {'name': 'MP-133', 'image': 'mp133.jpg'},
+                    {'name': 'MP-153', 'image': 'mp153.jpg'},
+                    {'name': 'Saiga-12k', 'image': 'saiga.jpg'}
                 ],
                 'calibers': ['12x70', '20x70'],
                 'budget': 'low',
